@@ -74,6 +74,8 @@ func LaunchApp(ctx context.Context, cfg *config.Config) {
 
 	// Rate Limiter
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(10)))
+
+	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000", "http://localhost:8080"},
 		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodPatch, http.MethodDelete},

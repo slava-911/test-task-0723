@@ -16,13 +16,24 @@ Authorization: Bearer {{auth_token}}
 
 ### Get order
 
-GET http://localhost:10001/orders/5
+GET http://localhost:10001/orders/9a31a7ff-f29e-4c71-a3a7-bed296afeefc
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+### Add product to order
+
+POST http://localhost:10001/orders/content/9a31a7ff-f29e-4c71-a3a7-bed296afeefc?product_id=b914144a-bc32-41bf-95c7-ed94d2da1704&quantity=2
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+### Delete product from order
+
+DELETE http://localhost:10001/orders/content/9a31a7ff-f29e-4c71-a3a7-bed296afeefc?product_id=b914144a-bc32-41bf-95c7-ed94d2da1704
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 ### Complete order
 
-POST http://localhost:8080/orders/complete
+POST http://localhost:10001/orders/complete/9a31a7ff-f29e-4c71-a3a7-bed296afeefc
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
-

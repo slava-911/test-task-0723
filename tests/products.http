@@ -1,0 +1,16 @@
+### Create product
+
+POST http://localhost:10001/products
+Content-Type: application/json
+
+{
+  "price": 50,
+  "quantity": 25,
+  "description": "rtgfgbfb",
+  "tags": ["food", "milk"]
+}
+
+### Get product
+
+GET http://localhost:10001/products/6e3df328-db6f-4194-8862-a1319edd17c3
+Content-Type: application/json

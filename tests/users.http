@@ -1,12 +1,11 @@
 ### Update user
 
-PATCH http://localhost:8080/profile
+PATCH http://localhost:10001/profile
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "name": "Ivan",
-  "old_password": "qaz123",
+  "old_password": "12345678",
   "new_password": "qaz12345"
 }
 
@@ -18,6 +17,6 @@ Authorization: Bearer {{auth_token}}
 
 ### Get user by ID
 
-GET http://localhost:10001/profile/11d0816b-f71e-409a-b2b9-43a6caac71fa
+GET http://localhost:10001/profile
 Accept: application/json
 Authorization: Bearer {{auth_token}}

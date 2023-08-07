@@ -34,12 +34,12 @@ func NewOrderHandler(s service.OrderService, l *logging.Logger) *orderHandler {
 }
 
 func (h *orderHandler) Register(e *echo.Echo) {
-	e.POST(ordersPath, h.CreateOrder, jwt.Middleware)
-	e.GET(ordersPath, h.GetOrders, jwt.Middleware)
-	e.GET(ordersIdPath, h.GetOrder, jwt.Middleware)
-	e.POST(ordersCompletePath, h.CompleteOrder, jwt.Middleware)
-	e.POST(ordersContentPath, h.AddProductToOrder, jwt.Middleware)
-	e.DELETE(ordersContentPath, h.DeleteProductFromOrder, jwt.Middleware)
+	e.POST(ordersPath, jwt.Middleware(h.CreateOrder, h.logger))
+	e.GET(ordersPath, jwt.Middleware(h.GetOrders, h.logger))
+	e.GET(ordersIdPath, jwt.Middleware(h.GetOrder, h.logger))
+	e.POST(ordersCompletePath, jwt.Middleware(h.CompleteOrder, h.logger))
+	e.POST(ordersContentPath, jwt.Middleware(h.AddProductToOrder, h.logger))
+	e.DELETE(ordersContentPath, jwt.Middleware(h.DeleteProductFromOrder, h.logger))
 }
 
 func (h *orderHandler) CreateOrder(c echo.Context) error {
@@ -62,7 +62,7 @@ func (h *orderHandler) CreateOrder(c echo.Context) error {
 func (h *orderHandler) GetOrders(c echo.Context) error {
 	h.logger.Info("request received to get orders")
 
-	pId := c.Request().Context().Value("user_id")
+	pId := c.Get("user_id")
 	if pId == nil {
 		h.logger.Error("there is no user_id in context")
 		return echo.NewHTTPError(http.StatusUnauthorized, "failed to parse parameter user_id")

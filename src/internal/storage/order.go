@@ -55,7 +55,7 @@ func (s *orderStorage) FindAllByUserId(ctx context.Context, id string, limit, of
 
 	q := `
 		SELECT
-			uo.id, uo.user_id, uo.created_at, uo.completed, SUM(oc.price * oc.quantity) AS cost
+			uo.id, uo.user_id, uo.created_at, uo.completed, COALESCE(SUM(oc.price * oc.quantity), 0) AS cost
 		FROM 
 			(SELECT *
 			FROM orders
@@ -102,7 +102,7 @@ func (s *orderStorage) FindOneById(ctx context.Context, id string) (r dmodel.Ord
 
 	q := `
 		SELECT
-			o.id, o.user_id, o.created_at, o.completed, SUM(oc.price * oc.quantity) AS cost
+			o.id, o.user_id, o.created_at, o.completed, COALESCE(SUM(oc.price * oc.quantity), 0) AS cost
 		FROM 
 			orders o
 		LEFT JOIN orders_content oc

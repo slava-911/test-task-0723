@@ -42,9 +42,9 @@ func (h *userHandler) Register(e *echo.Echo) {
 	e.POST(signUpPath, h.Signup)
 	e.POST(authPath, h.Auth)
 	e.PUT(authPath, h.Auth)
-	e.GET(userPath, h.GetUser, jwt.Middleware)
-	e.PATCH(userPath, h.PartiallyUpdateUser, jwt.Middleware)
-	e.DELETE(userPath, h.DeleteUser, jwt.Middleware)
+	e.GET(userPath, jwt.Middleware(h.GetUser, h.logger))
+	e.PATCH(userPath, jwt.Middleware(h.PartiallyUpdateUser, h.logger))
+	e.DELETE(userPath, jwt.Middleware(h.DeleteUser, h.logger))
 }
 
 func (h *userHandler) Signup(c echo.Context) error {
@@ -76,7 +76,7 @@ func (h *userHandler) Signup(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, token)
+	return c.JSONBlob(http.StatusOK, token)
 }
 
 func (h *userHandler) Auth(c echo.Context) error {
@@ -97,11 +97,17 @@ func (h *userHandler) Auth(c echo.Context) error {
 		}
 
 		if user, err = h.userService.GetOneByEmail(c.Request().Context(), req.Email, req.Password); err != nil {
-			return err
+			wrappedErr := fmt.Errorf("authorization failed %w", err)
+			switch {
+			case errors.Is(err, apperror.ErrNotFound):
+				return echo.NewHTTPError(http.StatusNotFound, wrappedErr.Error())
+			default:
+				return echo.NewHTTPError(http.StatusInternalServerError, wrappedErr.Error())
+			}
 		}
 
 		if token, err = h.jwtHelper.GenerateAccessToken(user); err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 	case http.MethodPut:
 		if err = c.Bind(&rt); err != nil {
@@ -109,11 +115,11 @@ func (h *userHandler) Auth(c echo.Context) error {
 		}
 
 		if token, err = h.jwtHelper.UpdateRefreshToken(rt); err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 	}
 
-	return c.JSON(http.StatusOK, token)
+	return c.JSONBlob(http.StatusOK, token)
 }
 
 func (h *userHandler) GetUser(c echo.Context) error {
@@ -124,7 +130,7 @@ func (h *userHandler) GetUser(c echo.Context) error {
 		user dmodel.User
 	)
 
-	pId := c.Request().Context().Value("user_id")
+	pId := c.Get("user_id")
 	if pId == nil {
 		h.logger.Error("there is no user_id in context")
 		return echo.NewHTTPError(http.StatusUnauthorized, "failed to parse parameter user_id")
@@ -147,7 +153,7 @@ func (h *userHandler) GetUser(c echo.Context) error {
 func (h *userHandler) PartiallyUpdateUser(c echo.Context) error {
 	h.logger.Info("request to update user")
 
-	pId := c.Request().Context().Value("user_id")
+	pId := c.Get("user_id")
 	if pId == nil {
 		h.logger.Error("there is no user_id in context")
 		return echo.NewHTTPError(http.StatusUnauthorized, "failed to parse parameter user_id")
@@ -210,7 +216,7 @@ func (h *userHandler) PartiallyUpdateUser(c echo.Context) error {
 func (h *userHandler) DeleteUser(c echo.Context) error {
 	h.logger.Info("request to delete user")
 
-	pId := c.Request().Context().Value("user_id")
+	pId := c.Get("user_id")
 	if pId == nil {
 		h.logger.Error("there is no user_id in context")
 		return echo.NewHTTPError(http.StatusUnauthorized, "failed to parse parameter user_id")

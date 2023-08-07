@@ -14,7 +14,7 @@ import (
 
 const (
 	productsPath   = "/products"
-	productsIdPath = "/products/:order_id"
+	productsIdPath = "/products/:product_id"
 )
 
 type productHandler struct {
