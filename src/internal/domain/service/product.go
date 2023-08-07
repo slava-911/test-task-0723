@@ -25,18 +25,18 @@ func NewProductService(s storage.ProductStorage, l *logging.Logger) *productServ
 	}
 }
 
-func (s *productService) Create(ctx context.Context, req *cmodel.CreateProductDTO) (r *dmodel.Product, err error) {
+func (s *productService) Create(ctx context.Context, req *cmodel.CreateProductDTO) (r dmodel.Product, err error) {
 	newProduct := req.ToProduct()
 	newProduct.Id = uuid.New().String()
-	newProduct, err = s.storage.Create(ctx, newProduct)
+	r, err = s.storage.Create(ctx, newProduct)
 	if err != nil {
 		s.logger.Error(err)
 		return r, err
 	}
-	return newProduct, nil
+	return r, nil
 }
 
-func (s *productService) GetOneById(ctx context.Context, id string) (r *dmodel.Product, err error) {
+func (s *productService) GetOneById(ctx context.Context, id string) (r dmodel.Product, err error) {
 	r, err = s.storage.FindOneById(ctx, id)
 	if err != nil {
 		s.logger.Error(err)

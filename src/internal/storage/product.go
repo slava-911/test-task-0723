@@ -24,7 +24,7 @@ func NewProductStorage(c postgresql.Client, l *logging.Logger) *productStorage {
 	}
 }
 
-func (s *productStorage) Create(ctx context.Context, p *dmodel.Product) (r *dmodel.Product, err error) {
+func (s *productStorage) Create(ctx context.Context, p *dmodel.Product) (r dmodel.Product, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -38,17 +38,17 @@ func (s *productStorage) Create(ctx context.Context, p *dmodel.Product) (r *dmod
 	s.logger.Trace("executing SQL query to create product")
 
 	row := s.db.QueryRow(ctx, q, p.Id, p.Price, p.Quantity, p.Description, p.Tags)
-	if err = row.Scan(&p.Id); err != nil {
+	if err = row.Scan(&r.Id); err != nil {
 		if detErr := postgresql.DetailedPgError(err); detErr != nil {
 			return r, detErr
 		}
 		return r, err
 	}
 
-	return p, nil
+	return *p, nil
 }
 
-func (s *productStorage) FindOneById(ctx context.Context, id string) (r *dmodel.Product, err error) {
+func (s *productStorage) FindOneById(ctx context.Context, id string) (r dmodel.Product, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

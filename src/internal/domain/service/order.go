@@ -26,25 +26,25 @@ func NewOrderService(s storage.OrderStorage, l *logging.Logger) *orderService {
 	}
 }
 
-func (s *orderService) Create(ctx context.Context, req *cmodel.CreateOrderDTO) (r *dmodel.Order, err error) {
+func (s *orderService) Create(ctx context.Context, req *cmodel.CreateOrderDTO) (r dmodel.Order, err error) {
 	newOrder := req.ToOrder()
 	newOrder.Id = uuid.New().String()
 	newOrder.CreatedAt = time.Now()
-	newOrder, err = s.storage.Create(ctx, newOrder)
+	r, err = s.storage.Create(ctx, newOrder)
 	if err != nil {
 		s.logger.Error(err)
 		return r, err
 	}
-	return newOrder, nil
+	return r, nil
 }
 
-func (s *orderService) GetAllByUserId(ctx context.Context, id string, limit, offset int) (r *cmodel.OrdersResponse, err error) {
+func (s *orderService) GetAllByUserId(ctx context.Context, id string, limit, offset int) (r cmodel.OrdersResponse, err error) {
 	orders, err := s.storage.FindAllByUserId(ctx, id, limit, offset)
 	if err != nil {
 		s.logger.Error(err)
 		return r, err
 	}
-	r = &cmodel.OrdersResponse{
+	r = cmodel.OrdersResponse{
 		Limit:  limit,
 		Offset: offset,
 		Orders: orders,
@@ -52,7 +52,7 @@ func (s *orderService) GetAllByUserId(ctx context.Context, id string, limit, off
 	return r, nil
 }
 
-func (s *orderService) GetOneById(ctx context.Context, id string) (r *dmodel.Order, err error) {
+func (s *orderService) GetOneById(ctx context.Context, id string) (r dmodel.Order, err error) {
 	r, err = s.storage.FindOneById(ctx, id)
 	if err != nil {
 		s.logger.Error(err)

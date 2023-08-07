@@ -26,7 +26,7 @@ func NewUserStorage(c postgresql.Client, l *logging.Logger) *userStorage {
 	}
 }
 
-func (s *userStorage) Create(ctx context.Context, u *dmodel.User) (r *dmodel.User, err error) {
+func (s *userStorage) Create(ctx context.Context, u *dmodel.User) (r dmodel.User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -40,17 +40,17 @@ func (s *userStorage) Create(ctx context.Context, u *dmodel.User) (r *dmodel.Use
 	s.logger.Trace("executing SQL query to create user")
 
 	row := s.db.QueryRow(ctx, q, u.Id, u.FirstName, u.LastName, u.Email, u.Password, u.Age, u.IsMarried)
-	if err = row.Scan(&u.Id); err != nil {
+	if err = row.Scan(&r.Id); err != nil {
 		if detErr := postgresql.DetailedPgError(err); detErr != nil {
 			return r, detErr
 		}
 		return r, err
 	}
 
-	return u, nil
+	return *u, nil
 }
 
-func (s *userStorage) FindOneByEmail(ctx context.Context, email string) (r *dmodel.User, err error) {
+func (s *userStorage) FindOneByEmail(ctx context.Context, email string) (r dmodel.User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -77,7 +77,7 @@ func (s *userStorage) FindOneByEmail(ctx context.Context, email string) (r *dmod
 	return r, nil
 }
 
-func (s *userStorage) FindOneById(ctx context.Context, id string) (r *dmodel.User, err error) {
+func (s *userStorage) FindOneById(ctx context.Context, id string) (r dmodel.User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

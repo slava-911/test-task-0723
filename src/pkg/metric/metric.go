@@ -20,6 +20,7 @@ func Register(e *echo.Echo, serviceName string) {
 	})
 
 	e.GET(heartbeatPath, func(c echo.Context) error {
-		return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
+		//return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
+		return c.String(http.StatusOK, "OK")
 	})
 }

@@ -7,12 +7,8 @@ import (
 )
 
 type SignInUserDTO struct {
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Age       int    `json:"age"`
-	IsMarried bool   `json:"is_married"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type CreateUserDTO struct {

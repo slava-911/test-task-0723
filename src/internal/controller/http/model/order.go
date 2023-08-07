@@ -15,7 +15,7 @@ func (d *CreateOrderDTO) ToOrder() *dmodel.Order {
 }
 
 type OrdersResponse struct {
-	Limit  int             `json:"limit"`
-	Offset int             `json:"offset"`
-	Orders []*dmodel.Order `json:"orders"`
+	Limit  int            `json:"limit"`
+	Offset int            `json:"offset"`
+	Orders []dmodel.Order `json:"orders"`
 }

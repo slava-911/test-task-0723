@@ -1,0 +1,10 @@
+### heartbeat
+
+GET http://localhost:8080/heartbeat
+Accept: application/json
+
+
+### home
+
+GET http://localhost:8080/
+Accept: application/json

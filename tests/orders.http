@@ -1,0 +1,28 @@
+### Create order
+
+POST http://localhost:10001/orders
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "user_id": "11d0816b-f71e-409a-b2b9-43a6caac71fa"
+}
+
+### Get orders by user id
+
+GET http://localhost:10001/orders?limit=10&offset=0
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+### Get order
+
+GET http://localhost:10001/orders/5
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+### Complete order
+
+POST http://localhost:8080/orders/complete
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+

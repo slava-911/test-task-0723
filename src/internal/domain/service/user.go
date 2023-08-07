@@ -25,7 +25,7 @@ func NewUserService(s storage.UserStorage, l *logging.Logger) *userService {
 	}
 }
 
-func (s *userService) Create(ctx context.Context, req *cmodel.CreateUserDTO) (r *dmodel.User, err error) {
+func (s *userService) Create(ctx context.Context, req *cmodel.CreateUserDTO) (r dmodel.User, err error) {
 	newUser := req.ToUser()
 	newUser.Id = uuid.New().String()
 	s.logger.Debug("generate password hash")
@@ -34,15 +34,15 @@ func (s *userService) Create(ctx context.Context, req *cmodel.CreateUserDTO) (r 
 		return r, err
 	}
 
-	newUser, err = s.storage.Create(ctx, newUser)
+	r, err = s.storage.Create(ctx, newUser)
 	if err != nil {
 		s.logger.Error(err)
 		return r, err
 	}
-	return newUser, nil
+	return r, nil
 }
 
-func (s *userService) GetOneByEmail(ctx context.Context, email, pwd string) (r *dmodel.User, err error) {
+func (s *userService) GetOneByEmail(ctx context.Context, email, pwd string) (r dmodel.User, err error) {
 	r, err = s.storage.FindOneByEmail(ctx, email)
 	if err != nil {
 		s.logger.Error(err)
@@ -58,7 +58,7 @@ func (s *userService) GetOneByEmail(ctx context.Context, email, pwd string) (r *
 	return r, nil
 }
 
-func (s *userService) GetOneById(ctx context.Context, id string) (r *dmodel.User, err error) {
+func (s *userService) GetOneById(ctx context.Context, id string) (r dmodel.User, err error) {
 	r, err = s.storage.FindOneById(ctx, id)
 	if err != nil {
 		s.logger.Error(err)

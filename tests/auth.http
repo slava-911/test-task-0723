@@ -1,0 +1,47 @@
+### Auth
+
+POST http://localhost:10001/auth
+Content-Type: application/json
+
+{
+  "email": "qwerty@gmail.com",
+  "password": "12345678"
+}
+
+> {%
+client.global.set("auth_token", response.body.token)
+client.global.set("refresh_token", response.body.refresh_token)
+%}
+
+### Signup
+
+POST http://localhost:10001/signup
+Content-Type: application/json
+
+{
+  "firstname": "Ivan",
+  "lastname": "Ivanov",
+  "email": "qwerty@gmail.com",
+  "password": "12345678",
+  "repeat_password": "12345678",
+  "age": 18
+}
+
+> {%
+client.global.set("auth_token", response.body.token)
+client.global.set("refresh_token", response.body.refresh_token)
+%}
+
+### Refresh token
+
+PUT http://localhost:10001/auth
+Content-Type: application/json
+
+{
+  "refresh_token": "{{refresh_token}}"
+}
+
+> {%
+client.global.set("auth_token", response.body.token)
+client.global.set("refresh_token", response.body.refresh_token)
+%}

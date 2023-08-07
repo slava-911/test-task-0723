@@ -8,7 +8,7 @@ app:
 
 http:
   ip: 0.0.0.0
-  port: 8080
+  port: 10001
   read_timeout: 15s
   write_timeout: 15s
 
@@ -21,7 +21,7 @@ database:
   host: 0.0.0.0
   port: 5432
   username: postgres
-  password: password
+  password: postgres
   name: postgres
   max_attempts: 5
   connection_timeout: 5s

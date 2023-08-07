@@ -25,7 +25,7 @@ func NewOrderStorage(c postgresql.Client, l *logging.Logger) *orderStorage {
 	}
 }
 
-func (s *orderStorage) Create(ctx context.Context, o *dmodel.Order) (r *dmodel.Order, err error) {
+func (s *orderStorage) Create(ctx context.Context, o *dmodel.Order) (r dmodel.Order, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -46,10 +46,10 @@ func (s *orderStorage) Create(ctx context.Context, o *dmodel.Order) (r *dmodel.O
 		return r, err
 	}
 
-	return o, nil
+	return *o, nil
 }
 
-func (s *orderStorage) FindAllByUserId(ctx context.Context, id string, limit, offset int) (r []*dmodel.Order, err error) {
+func (s *orderStorage) FindAllByUserId(ctx context.Context, id string, limit, offset int) (r []dmodel.Order, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -74,7 +74,7 @@ func (s *orderStorage) FindAllByUserId(ctx context.Context, id string, limit, of
 		return r, err
 	}
 
-	r = make([]*dmodel.Order, 0, limit)
+	r = make([]dmodel.Order, 0, limit)
 	for rows.Next() {
 		var o dmodel.Order
 		err = rows.Scan(&o.Id, &o.UserId, &o.CreatedAt, &o.Completed, &o.Cost)
@@ -87,7 +87,7 @@ func (s *orderStorage) FindAllByUserId(ctx context.Context, id string, limit, of
 			}
 			return r, err
 		}
-		r = append(r, &o)
+		r = append(r, o)
 	}
 
 	if len(r) == 0 {
@@ -96,7 +96,7 @@ func (s *orderStorage) FindAllByUserId(ctx context.Context, id string, limit, of
 	return r, nil
 }
 
-func (s *orderStorage) FindOneById(ctx context.Context, id string) (r *dmodel.Order, err error) {
+func (s *orderStorage) FindOneById(ctx context.Context, id string) (r dmodel.Order, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -130,7 +130,7 @@ func (s *orderStorage) FindOneById(ctx context.Context, id string) (r *dmodel.Or
 	if o.Id == "" {
 		return r, apperror.ErrNotFound
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (s *orderStorage) Complete(ctx context.Context, id string) error {

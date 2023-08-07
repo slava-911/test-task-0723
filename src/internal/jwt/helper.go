@@ -34,7 +34,7 @@ func NewHelper(RTCache cache.Repository, logger *logging.Logger) Helper {
 }
 
 type Helper interface {
-	GenerateAccessToken(u *dmodel.User) ([]byte, error)
+	GenerateAccessToken(u dmodel.User) ([]byte, error)
 	UpdateRefreshToken(rt RT) ([]byte, error)
 }
 
@@ -45,7 +45,7 @@ func (h *helper) UpdateRefreshToken(rt RT) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var u *dmodel.User
+	var u dmodel.User
 	err = json.Unmarshal(userBytes, &u)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (h *helper) UpdateRefreshToken(rt RT) ([]byte, error) {
 	return h.GenerateAccessToken(u)
 }
 
-func (h *helper) GenerateAccessToken(u *dmodel.User) ([]byte, error) {
+func (h *helper) GenerateAccessToken(u dmodel.User) ([]byte, error) {
 	key := []byte(config.GetConfig().JWT.Secret)
 	signer, err := jwt.NewSignerHS(jwt.HS256, key)
 	if err != nil {

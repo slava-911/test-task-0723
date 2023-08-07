@@ -62,13 +62,26 @@ func LaunchApp(ctx context.Context, cfg *config.Config) {
 	userHandler := handler.NewUserHandler(userService, jwtHelper, validateInst, logger)
 	userHandler.Register(e)
 
-	//orderStorage := storage.NewOrderStorage(dbClient, logger)
-	//orderService := service.NewOrderService(orderStorage, logger)
-	//orderHandler := handler.NewOrderHandler(orderService, logger)
-	//orderHandler.Register(e)
+	orderStorage := storage.NewOrderStorage(dbClient, logger)
+	orderService := service.NewOrderService(orderStorage, logger)
+	orderHandler := handler.NewOrderHandler(orderService, logger)
+	orderHandler.Register(e)
+
+	productStorage := storage.NewProductStorage(dbClient, logger)
+	productService := service.NewProductService(productStorage, logger)
+	productHandler := handler.NewProductHandler(productService, logger)
+	productHandler.Register(e)
 
 	// Rate Limiter
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(10)))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000", "http://localhost:8080"},
+		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodPatch, http.MethodDelete},
+		AllowHeaders: []string{"Authorization", "Location", "Charset", "Access-Control-Allow-Origin", "Content-Type",
+			"content-type", "Origin", "Accept", "Content-Length", "Accept-Encoding", "X-CSRF-Token"},
+		ExposeHeaders:    []string{"Location", "Authorization", "Content-Disposition"},
+		AllowCredentials: true,
+	}))
 
 	logger.WithFields(map[string]any{
 		"IP":   cfg.HTTP.IP,

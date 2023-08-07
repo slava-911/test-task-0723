@@ -3,6 +3,7 @@ package jwt
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -26,6 +27,7 @@ func Middleware(echo.HandlerFunc) echo.HandlerFunc {
 
 		c.Logger().Debug("create jwt verifier")
 		jwtToken := authHeader[1]
+		c.Echo().Logger.Info(fmt.Sprintf("jwtToken: %s", jwtToken))
 		verifier, err := jwt.NewVerifierHS(jwt.HS256, []byte(config.GetConfig().JWT.Secret))
 		if err != nil {
 			c.Logger().Error(err)

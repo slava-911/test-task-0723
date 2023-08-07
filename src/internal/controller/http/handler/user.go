@@ -53,11 +53,11 @@ func (h *userHandler) Signup(c echo.Context) error {
 	var (
 		err   error
 		token []byte
-		req   *cmodel.CreateUserDTO
-		user  *dmodel.User
+		req   cmodel.CreateUserDTO
+		user  dmodel.User
 	)
 
-	if err = c.Bind(req); err != nil {
+	if err = c.Bind(&req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("failed to decode user data: %w", err).Error())
 	}
 
@@ -68,7 +68,7 @@ func (h *userHandler) Signup(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
 
-	if user, err = h.userService.Create(c.Request().Context(), req); err != nil {
+	if user, err = h.userService.Create(c.Request().Context(), &req); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to create user: %w", err).Error())
 	}
 
@@ -85,14 +85,14 @@ func (h *userHandler) Auth(c echo.Context) error {
 	var (
 		err   error
 		token []byte
-		req   *cmodel.SignInUserDTO
-		user  *dmodel.User
+		req   cmodel.SignInUserDTO
+		user  dmodel.User
 		rt    jwt.RT
 	)
 
 	switch c.Request().Method {
 	case http.MethodPost:
-		if err = c.Bind(req); err != nil {
+		if err = c.Bind(&req); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("failed to decode user data: %w", err).Error())
 		}
 
@@ -121,7 +121,7 @@ func (h *userHandler) GetUser(c echo.Context) error {
 
 	var (
 		err  error
-		user *dmodel.User
+		user dmodel.User
 	)
 
 	pId := c.Request().Context().Value("user_id")
